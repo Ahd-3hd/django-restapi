@@ -17,3 +17,18 @@ class Test_Create_Post(TestCase):
             author_id=1,
             status='published'
         )
+    def test_blog_content(self):
+        post = Post.postobjects.get(id=1)
+        cat = Category.objects.get(id=1)
+        author = f'{post.author}'
+        excerpt = f'{post.excerpt}'
+        title = f'{post.title}'
+        content = f'{post.content}'
+        status = f'{post.status}'
+
+        self.assertEqual(author, 'test_user1')
+        self.assertEqual(title,'post title')
+        self.assertEqual(content,"Post Content")
+        self.assertEqual(status, 'published')
+        self.assertEqual(str(post),"post title")
+        self.assertEqual(str(cat),"django")
