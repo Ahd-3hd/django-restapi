@@ -5,6 +5,7 @@ import Footer from "./components/Footer";
 import Posts from "./components/Posts";
 import Register from "./components/Register";
 import Login from "./components/Login";
+import Single from "./components/Single";
 import Logout from "./components/Logout";
 import { useEffect, useState } from "react";
 
@@ -41,6 +42,7 @@ function App() {
         <Route path="/register" component={Register} />
         <Route path="/login" component={Login} />
         <Route path="/login" component={Logout} />
+        <Route path="/post/:slug" component={Single} />
       </Switch>
       <Footer />
     </Router>
