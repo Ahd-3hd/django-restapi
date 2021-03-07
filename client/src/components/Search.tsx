@@ -1,4 +1,6 @@
-import PostsLoading from "./PostsLoading";
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../axios";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -6,8 +8,9 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
+import Link from "@material-ui/core/Link";
+import { useLocation } from "react-router-dom";
 import { IPost } from "../types";
-import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -36,26 +39,36 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Posts({
-  posts,
-  isLoading,
-}: {
-  posts: IPost[] | null;
-  isLoading: boolean;
-}) {
+const Search = () => {
   const classes = useStyles();
-  console.log(posts);
-  if (isLoading) return <PostsLoading />;
-  if (!posts) return <h1>Wait dude</h1>;
+  const search = "search";
+  const [appState, setAppState] = useState<{ search: string; posts: IPost[] }>({
+    search: "",
+    posts: [],
+  });
+
+  useEffect(() => {
+    axiosInstance.get(search + "/" + window.location.search).then((res) => {
+      const allPosts = res.data;
+      setAppState((prev) => ({ ...prev, posts: allPosts }));
+      console.log(res.data);
+    });
+  }, [setAppState]);
+
   return (
-    <>
-      <Container maxWidth="md" component="main" style={{ marginTop: "2rem" }}>
+    <React.Fragment>
+      <Container maxWidth="md" component="main">
         <Grid container spacing={5} alignItems="flex-end">
-          {posts.map((post) => {
+          {appState.posts.map((post) => {
             return (
+              // Enterprise card is full width at sm breakpoint
               <Grid item key={post.id} xs={12} md={4}>
                 <Card>
-                  <Link to={`post/${post.slug}`}>
+                  <Link
+                    color="textPrimary"
+                    href={"/post/" + post.slug}
+                    className={classes.link}
+                  >
                     <CardMedia
                       className={classes.cardMedia}
                       image="https://source.unsplash.com/random"
@@ -72,12 +85,8 @@ export default function Posts({
                       {post.title.substr(0, 50)}...
                     </Typography>
                     <div className={classes.postText}>
-                      <Typography
-                        component="p"
-                        color="textPrimary"
-                      ></Typography>
-                      <Typography variant="subtitle2" color="textSecondary">
-                        {post.excerpt.substr(0, 60)}...
+                      <Typography color="textSecondary">
+                        {post.excerpt.substr(0, 40)}...
                       </Typography>
                     </div>
                   </CardContent>
@@ -87,6 +96,7 @@ export default function Posts({
           })}
         </Grid>
       </Container>
-    </>
+    </React.Fragment>
   );
-}
+};
+export default Search;

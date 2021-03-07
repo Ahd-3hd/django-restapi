@@ -8,26 +8,25 @@ import Login from "./components/Login";
 import Single from "./components/Single";
 import Logout from "./components/Logout";
 import { useEffect, useState } from "react";
+import axiosInstance from "./axios";
+import { IPost } from "./types";
 
 function App() {
-  const [state, setState] = useState({
-    loading: false,
-    posts: [],
+  const [appState, setAppState] = useState<{
+    loading: boolean;
+    posts: IPost[] | null;
+  }>({
+    loading: true,
+    posts: null,
   });
-
   useEffect(() => {
-    setState((prev) => ({ ...prev, loading: true }));
-    const apiUrl = `http://127.0.0.1:8000/api/`;
-    fetch(apiUrl)
-      .then((data) => data.json())
-      .then((posts) =>
-        setState({
-          posts,
-          loading: false,
-        })
-      )
-      .catch((err) => setState((prev) => ({ ...prev, loading: false })));
-  }, []);
+    axiosInstance.get("http://127.0.0.1:8000/api/").then((res) => {
+      const allPosts = res.data;
+      setAppState({ loading: false, posts: allPosts });
+      console.log(res.data);
+    });
+  }, [setAppState]);
+
   return (
     <Router>
       <Header />
@@ -36,7 +35,7 @@ function App() {
           exact
           path="/"
           component={() => (
-            <Posts posts={state.posts} isLoading={state.loading} />
+            <Posts posts={appState.posts} isLoading={appState.loading} />
           )}
         />
         <Route path="/register" component={Register} />
