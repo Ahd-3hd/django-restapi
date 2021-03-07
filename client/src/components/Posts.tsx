@@ -6,15 +6,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-
-interface Post {
-  id: number;
-  title: string;
-  author: string;
-  excerpt: string;
-  content: string;
-  status: string;
-}
+import { IPost } from "../types";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   cardMedia: {
@@ -47,7 +40,7 @@ export default function Posts({
   posts,
   isLoading,
 }: {
-  posts: Post[];
+  posts: IPost[];
   isLoading: boolean;
 }) {
   const classes = useStyles();
@@ -61,11 +54,13 @@ export default function Posts({
             return (
               <Grid item key={post.id} xs={12} md={4}>
                 <Card>
-                  <CardMedia
-                    className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
-                    title="Image title"
-                  />
+                  <Link to={`post/${post.slug}`}>
+                    <CardMedia
+                      className={classes.cardMedia}
+                      image="https://source.unsplash.com/random"
+                      title="Image title"
+                    />
+                  </Link>
                   <CardContent>
                     <Typography
                       gutterBottom
